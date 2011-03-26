@@ -3,9 +3,9 @@
   "description":  "Kind of a rip off of Docco",
   "keywords":     ["documentation", "docs", "generator"],
   "author":       "Chris Dickinson",
-  "version":      "0.0.1",
+  "version":      "0.0.2",
   "dependencies": {
-    "plate":     ">= 0.0.6"
+    "plate":     "0.0.8"
   },
   "licenses": [{
     "type":       "MIT",
