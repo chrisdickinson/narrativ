@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>{{ file.filename }}</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="{{ options.base_url }}{{ options.stylesheet }}" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    {% if options.files|length %}
+      <div id="jump_to">
+        Jump To &hellip;
+        <div id="jump_wrapper">
+          <div id="jump_page">
+            {% for file in options.files %}
+              <a href="{{ file.filename }}.html" class="source">{{ file.filename }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    {% endif %}
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="docs">
+            <h1>
+              {{ file.filename }}
+            </h1>
+          </th>
+          <th class="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for section in sections %}
+          <tr id="section-{{ forloop.counter }}">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-{{ forloop.counter }}">&#182;</a>
+              </div>
+              {{ section.doc|safe }}
+            </td>
+            <td class="code">
+              {{ section.code|safe }}
+            </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

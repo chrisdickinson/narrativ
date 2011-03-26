@@ -1,0 +1,22 @@
+{
+    ".coffee":{
+        "language":"coffee-script",
+        "symbol":"#"
+    },
+    ".js":{
+        "language":"javascript",
+        "symbol":"//"
+    },
+    ".rb":{
+        "language":"ruby",
+        "symbol":"#"
+    },
+    ".py":{
+        "language":"python",
+        "symbol":"#"
+    },
+    ".c":{
+        "language":"c",
+        "symbol":"//"
+    }
+}
