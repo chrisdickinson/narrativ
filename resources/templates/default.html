@@ -15,7 +15,7 @@
         <div id="jump_wrapper">
           <div id="jump_page">
             {% for file in options.files %}
-              <a href="{{ file.filename }}.html" class="source">{{ file.filename }}</a>
+              <a href="{{ file.path|cut:destination.base_dir }}.html" class="source">{{ file.filename }}</a>
             {% endfor %}
           </div>
         </div>
