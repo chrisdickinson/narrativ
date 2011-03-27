@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>utils.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="base.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <div id="jump_to">
+        Jump To &hellip;
+        <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              <a href="/destination.js.html" class="source">destination.js</a>
+            
+              <a href="/directory.js.html" class="source">directory.js</a>
+            
+              <a href="/file.js.html" class="source">file.js</a>
+            
+              <a href="/index.js.html" class="source">index.js</a>
+            
+              <a href="/options.js.html" class="source">options.js</a>
+            
+              <a href="/parser.js.html" class="source">parser.js</a>
+            
+              <a href="/utils.js.html" class="source">utils.js</a>
+            
+          </div>
+        </div>
+      </div>
+    
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="docs">
+            <h1>
+              utils.js
+            </h1>
+          </th>
+          <th class="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+          
+          <tr id="section-1">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>This handy-dandy function makes life <strong>so</strong> much easier when
+your member functions are going to be including more than one or
+two callbacks.</p>
+
+<p><code>method</code>: Automatically prepends the initial value of <code>this</code> to the
+argument list of the incoming function, so you get python-style <code>self</code>
+references that <em>actually close in a sane way</em>.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre><span class="nx">exports</span><span class="p">.</span><span class="nx">method</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">fn</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="p">[</span><span class="k">this</span><span class="p">].</span><span class="nx">concat</span><span class="p">([].</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">)));</span>
+  <span class="p">};</span>
+<span class="p">};</span>
+
+</pre></div>
+            </td>
+          </tr>
+          
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

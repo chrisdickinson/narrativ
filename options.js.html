@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>options.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="base.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <div id="jump_to">
+        Jump To &hellip;
+        <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              <a href="/destination.js.html" class="source">destination.js</a>
+            
+              <a href="/directory.js.html" class="source">directory.js</a>
+            
+              <a href="/file.js.html" class="source">file.js</a>
+            
+              <a href="/index.js.html" class="source">index.js</a>
+            
+              <a href="/options.js.html" class="source">options.js</a>
+            
+              <a href="/parser.js.html" class="source">parser.js</a>
+            
+              <a href="/utils.js.html" class="source">utils.js</a>
+            
+          </div>
+        </div>
+      </div>
+    
+    <table cellpadding="0" cellspacing="0">
+      <thead>
+        <tr>
+          <th class="docs">
+            <h1>
+              options.js
+            </h1>
+          </th>
+          <th class="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+          
+          <tr id="section-1">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1>Options</h1>
+
+<p>Options provides the CLI interface for Narrativ.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre><span class="kd">var</span> <span class="nx">File</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./file&#39;</span><span class="p">).</span><span class="nx">File</span><span class="p">,</span>
+    <span class="nx">Directory</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./directory&#39;</span><span class="p">).</span><span class="nx">Directory</span><span class="p">,</span>
+    <span class="nx">Parser</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./parser&#39;</span><span class="p">).</span><span class="nx">Parser</span><span class="p">,</span>
+    <span class="nx">Destination</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./destination&#39;</span><span class="p">).</span><span class="nx">Destination</span><span class="p">,</span>
+    <span class="nx">plate</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;plate&#39;</span><span class="p">),</span>
+    <span class="nx">_path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">),</span>
+    <span class="nx">join</span> <span class="o">=</span> <span class="nx">_path</span><span class="p">.</span><span class="nx">join</span><span class="p">,</span>
+    <span class="nx">basename</span> <span class="o">=</span> <span class="nx">_path</span><span class="p">.</span><span class="nx">basename</span><span class="p">,</span>
+    <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">rpad</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">what</span><span class="p">,</span> <span class="nx">len</span><span class="p">)</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-2">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Make sure that the string is at least <code>len</code> characters long,
+padding the input on the right with spaces until it reaches
+that length.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">add</span> <span class="o">=</span> <span class="nx">len</span> <span class="o">-</span> <span class="nx">what</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+  <span class="k">while</span><span class="p">(</span><span class="nx">add</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">what</span> <span class="o">+=</span> <span class="s1">&#39; &#39;</span><span class="p">;</span>
+    <span class="o">--</span><span class="nx">add</span><span class="p">;</span>
+  <span class="p">}</span> 
+  <span class="k">return</span> <span class="nx">what</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="kd">var</span> <span class="nx">option</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-3">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Defines a flag or positional argument,
+a callback for applying the result to the options object,
+and help text.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="p">[].</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">),</span>
+      <span class="nx">callback</span> <span class="o">=</span> <span class="nx">args</span><span class="p">[</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-4">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Grab <code>0-(N-1)</code> arguments from the invocation.
+The last argument will be our <code>callback</code>.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>      <span class="nx">flags</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-5">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Store the returned function here
+so we can modify attributes of it later, dynamically.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">retval</span> <span class="o">=</span> <span class="o">!</span><span class="nx">flags</span><span class="p">.</span><span class="nx">length</span> <span class="o">?</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-6">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>If there aren't any flags defined
+return a positional callback, taking <code>Options</code>, the first argument left,
+and an array of the remaining arguments.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">head</span><span class="p">,</span> <span class="nx">tail</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">callback</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">head</span><span class="p">,</span> <span class="nx">tail</span><span class="p">);</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-7">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Returning one means that we've successfully popped an argument off the list.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>      <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="p">}</span> <span class="o">:</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">head</span><span class="p">,</span> <span class="nx">tail</span><span class="p">)</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-8">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>If <code>head</code> is one of our flags,
+return 1 to let the caller know that we've successfully matched the argument
+and <code>head</code> need not be unshifted back onto the argument list.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>      <span class="k">if</span><span class="p">(</span><span class="nx">flags</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">head</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-9">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>splice from 0 to the number of non-options arguments that the 
+<code>callback</code> accepts (determined by <code>Function.prototype.length</code>.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>        <span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">({},</span> <span class="p">[</span><span class="nx">opts</span><span class="p">].</span><span class="nx">concat</span><span class="p">(</span><span class="nx">tail</span><span class="p">.</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nx">callback</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">)));</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">};</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-10">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>the help function assigns <code>help_text</code> to the returned function,
+letting us decorate the outgoing function with additional help information.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="nx">retval</span><span class="p">.</span><span class="nx">help</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">retval</span><span class="p">.</span><span class="nx">help_text</span> <span class="o">=</span> <span class="s1">&#39;\t&#39;</span><span class="o">+</span><span class="nx">rpad</span><span class="p">(</span><span class="nx">flags</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">),</span> <span class="mi">40</span><span class="p">)</span> <span class="o">+</span> <span class="nx">h</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nx">retval</span><span class="p">;</span>
+  <span class="p">};</span>
+  <span class="k">return</span> <span class="nx">retval</span><span class="p">;</span>
+<span class="p">};</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-11">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Our list of flags and positional options.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre><span class="kd">var</span> <span class="nx">flag_options</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="nx">option</span><span class="p">(</span><span class="s1">&#39;-O&#39;</span><span class="p">,</span> <span class="s1">&#39;--target-dir&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">target_dir</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">target_dir</span> <span class="o">=</span> <span class="nx">target_dir</span><span class="p">;</span>
+  <span class="p">}).</span><span class="nx">help</span><span class="p">(</span><span class="s1">&#39;Set the output directory&#39;</span><span class="p">),</span>
+
+  <span class="nx">option</span><span class="p">(</span><span class="s1">&#39;-u&#39;</span><span class="p">,</span> <span class="s1">&#39;--url&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">url</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">base_url</span> <span class="o">=</span> <span class="nx">url</span><span class="p">;</span>
+  <span class="p">}).</span><span class="nx">help</span><span class="p">(</span><span class="s1">&#39;Base URL for serving stylesheets and javascript.&#39;</span><span class="p">),</span>
+
+  <span class="nx">option</span><span class="p">(</span><span class="s1">&#39;--css&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">stylesheet</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">css_file</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">stylesheet</span><span class="p">);</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">stylesheet</span> <span class="o">=</span> <span class="nx">basename</span><span class="p">(</span><span class="nx">stylesheet</span><span class="p">);</span>
+  <span class="p">}).</span><span class="nx">help</span><span class="p">(</span><span class="s1">&#39;Use a custom stylesheet&#39;</span><span class="p">),</span>
+
+  <span class="nx">option</span><span class="p">(</span><span class="s1">&#39;-T&#39;</span><span class="p">,</span> <span class="s1">&#39;--template&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">template</span><span class="p">)</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-12">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><strong>Bias Alert</strong>: I like using <a href="http://github.com/chrisdickinson/plate">plate</a>, partially because
+I wrote it and partially because it's got nice support for asynchronous template rendering.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nx">opts</span><span class="p">.</span><span class="nx">file_template</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">plate</span><span class="p">.</span><span class="nx">Template</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">template</span><span class="p">).</span><span class="nx">toString</span><span class="p">());</span>
+  <span class="p">}).</span><span class="nx">help</span><span class="p">(</span><span class="s1">&#39;Django-style template file to use when generating docs.&#39;</span><span class="p">),</span>
+
+  <span class="nx">option</span><span class="p">(</span><span class="s1">&#39;-X&#39;</span><span class="p">,</span> <span class="s1">&#39;--extensions&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">extensions</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">extensions</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">extensions</span><span class="p">));</span>
+  <span class="p">}).</span><span class="nx">help</span><span class="p">(</span><span class="s1">&#39;Extension JSON file, providing support for other languages.&#39;</span><span class="p">),</span>
+
+  <span class="nx">option</span><span class="p">(</span><span class="s1">&#39;-h&#39;</span><span class="p">,</span> <span class="s1">&#39;--help&#39;</span><span class="p">,</span> <span class="s1">&#39;-?&#39;</span><span class="p">,</span> <span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">usage</span><span class="p">();</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">error</span><span class="p">();</span>
+  <span class="p">}),</span>
+
+  <span class="nx">option</span><span class="p">(</span><span class="s1">&#39;-I&#39;</span><span class="p">,</span> <span class="s1">&#39;--ignore-dirs&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">dir</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">ignore_dirs</span> <span class="o">=</span> <span class="nx">dir</span><span class="p">;</span>
+  <span class="p">}).</span><span class="nx">help</span><span class="p">(</span><span class="s1">&#39;Portion of target directory path to ignore when generating docs.&#39;</span><span class="p">),</span>
+
+  <span class="nx">option</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">opts</span><span class="p">,</span> <span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">retval</span><span class="p">;</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">roots</span> <span class="o">=</span> <span class="nx">opts</span><span class="p">.</span><span class="nx">roots</span> <span class="o">||</span> <span class="p">[];</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-13">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>this will throw an Error if the target
+does not exist on the file system.
+the calling loop will catch it and skip this argument when this happens.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="k">if</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">statSync</span><span class="p">(</span><span class="nx">target</span><span class="p">).</span><span class="nx">isFile</span><span class="p">())</span> <span class="p">{</span>
+      <span class="nx">retval</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parser</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">File</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">parser</span><span class="p">);</span>
+      <span class="p">};</span>
+      <span class="nx">retval</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">dirname</span><span class="p">(</span><span class="nx">target</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">retval</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">parser</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Directory</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">parser</span><span class="p">);</span>
+      <span class="p">};</span>
+      <span class="nx">retval</span><span class="p">.</span><span class="nx">target</span> <span class="o">=</span> <span class="nx">target</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nx">opts</span><span class="p">.</span><span class="nx">roots</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">retval</span><span class="p">);</span>
+  <span class="p">}).</span><span class="nx">help</span><span class="p">(</span><span class="s1">&#39;Targets&#39;</span><span class="p">)</span>
+<span class="p">];</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-14">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h2>Options</h2>
+
+<p>This class provides useful shortcuts for
+outputing information, as well as stores the incoming
+flags and positional argument results from the command line.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre><span class="kd">var</span> <span class="nx">Options</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-15">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>If we've got no options, print the usage
+and then exit.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">usage</span><span class="p">();</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">error</span><span class="p">();</span>
+  <span class="p">}</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-16">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p>while there are args we'll continue to search
+for options to match them.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="k">while</span><span class="p">(</span><span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">for</span><span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">len</span> <span class="o">=</span> <span class="nx">flag_options</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">len</span> <span class="o">&amp;&amp;</span> <span class="nx">args</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">i</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">head</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">(),</span>
+          <span class="nx">tail</span> <span class="o">=</span> <span class="nx">args</span><span class="p">;</span>
+
+      <span class="kd">var</span> <span class="nx">ret</span> <span class="o">=</span> <span class="nx">flag_options</span><span class="p">[</span><span class="nx">i</span><span class="p">](</span><span class="k">this</span><span class="p">,</span> <span class="nx">head</span><span class="p">,</span> <span class="nx">tail</span><span class="p">);</span> 
+      <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="nx">ret</span><span class="p">)</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-17">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>if we didn't match, push the head back onto
+the arg stack.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>        <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">(</span><span class="nx">head</span><span class="p">);</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-18">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>otherwise, break and retry the options from the top.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>        <span class="k">break</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-19">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>Set default value for <code>css_file</code> and <code>stylesheet</code>.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">css_file</span> <span class="o">&amp;&amp;</span>
+    <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">css_file</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;../resources/base.css&#39;</span><span class="p">)),</span>
+    <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">stylesheet</span> <span class="o">=</span> <span class="s1">&#39;base.css&#39;</span><span class="p">));</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-20">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Set the default value for the <code>file_template</code>.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">file_template</span> <span class="o">&amp;&amp;</span>
+    <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">file_template</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">plate</span><span class="p">.</span><span class="nx">Template</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;../resources/templates/default.html&#39;</span><span class="p">)).</span><span class="nx">toString</span><span class="p">()));</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-21">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Set the default extensions (can you tell I like the <code>test &amp;&amp; (do = this)</code> syntax?)</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">extensions</span> <span class="o">&amp;&amp;</span>
+    <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">extensions</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;../resources/extensions/base.json&#39;</span><span class="p">)).</span><span class="nx">toString</span><span class="p">()));</span>
+
+  <span class="k">this</span><span class="p">.</span><span class="nx">ignore_dirs</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span>
+    <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">ignore_dirs</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">);</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-22">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>If there's no target dir, just output into docs in the current directory.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">target_dir</span> <span class="o">&amp;&amp;</span>
+    <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">target_dir</span> <span class="o">=</span> <span class="nx">join</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">cwd</span><span class="p">(),</span> <span class="s1">&#39;docs&#39;</span><span class="p">));</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-23">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Set the default base url -- this is how external media (like styles) will be referenced.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">base_url</span> <span class="o">===</span> <span class="kc">undefined</span> <span class="o">&amp;&amp;</span>
+    <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">base_url</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">);</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-24">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>if our target dir isn't absolute, <em>make</em> it absolute.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">target_dir</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!==</span> <span class="s1">&#39;/&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">target_dir</span> <span class="o">=</span> <span class="nx">join</span><span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">cwd</span><span class="p">(),</span> <span class="k">this</span><span class="p">.</span><span class="nx">target_dir</span><span class="p">);</span>
+  <span class="p">}</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-25">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>a flag that doesn't have an option yet --
+the idea being that we occasionally won't want to
+recurse into subdirectories.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">recurse</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-26">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>set <code>File.prototype.register</code> to add new files into a
+list maintained by this options object. See <a href="file.js.html">file.js</a></p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+  <span class="nx">self</span><span class="p">.</span><span class="nx">files</span> <span class="o">=</span> <span class="p">[];</span>
+  <span class="nx">File</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">register</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">self</span><span class="p">.</span><span class="nx">files</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>  
+  <span class="p">};</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-27">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>if we've got roots -- directories or files that need to be
+compiled -- create docs for each of them.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">roots</span> <span class="o">&amp;&amp;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">roots</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">destination</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Destination</span><span class="p">(</span><span class="nx">fn</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">target_dir</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">ignore_dirs</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">parser</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Parser</span><span class="p">(</span><span class="nx">destination</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">extensions</span><span class="p">);</span>
+    <span class="nx">fn</span><span class="p">(</span><span class="nx">parser</span><span class="p">).</span><span class="nx">compile</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">destination</span><span class="p">);</span> 
+    <span class="nx">destination</span><span class="p">.</span><span class="nx">write_media</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+  <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">Options</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">visit</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">what</span><span class="p">)</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-28">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Prints a notification whenever a file or directory is visited by <code>compile</code>.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;compiling &#39;</span><span class="o">+</span><span class="nx">what</span><span class="p">.</span><span class="nx">path</span><span class="o">+</span><span class="s1">&#39;...&#39;</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">Options</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">log</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-29">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>Dummy log wrapper.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">console</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">Options</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">error</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-30">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Error spits out the arguments and then closes the process.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">console</span><span class="p">,</span> <span class="nx">arguments</span><span class="p">);</span>
+  <span class="nx">process</span><span class="p">.</span><span class="nx">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="nx">Options</span><span class="p">.</span><span class="nx">parse</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nx">process</span><span class="p">.</span><span class="nx">ARGV</span><span class="p">.</span><span class="nx">slice</span><span class="p">();</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-31">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>skip <code>node</code> if it's in ARGV</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;node&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>
+  <span class="p">}</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-32">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>do the same with <code>narrativ</code>.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="k">if</span><span class="p">(</span><span class="nx">args</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="nx">indexOf</span><span class="p">(</span><span class="s1">&#39;narrativ&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">();</span>   
+  <span class="p">}</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-33">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>make sure that we don't get args like <code>['--this','=','that']</code> or <code>['--this=','that']</code>.
+these are cleaned into <code>['--this', 'that']</code>.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre>  <span class="nx">args</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">arg</span> <span class="o">!==</span> <span class="s1">&#39;=&#39;</span><span class="p">;</span> 
+  <span class="p">}).</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span><span class="p">(</span><span class="nx">arg</span><span class="p">[</span><span class="nx">arg</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;=&#39;</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nx">arg</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nx">arg</span><span class="p">;</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="k">new</span> <span class="nx">Options</span><span class="p">(</span><span class="nx">args</span><span class="p">);</span>
+<span class="p">};</span></pre></div>
+            </td>
+          </tr>
+          
+          <tr id="section-34">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>Print the usage, and print any information the flags have
+about their usage, and exit.</p>
+            </td>
+            <td class="code">
+              <div class="highlight"><pre><span class="nx">Options</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">usage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Usage: narrativ [options] [list of directories or files to generate documentation from]&quot;</span><span class="p">);</span>
+  <span class="nx">flag_options</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">flag</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">flag</span><span class="p">.</span><span class="nx">help_text</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+<span class="nx">exports</span><span class="p">.</span><span class="nx">Options</span> <span class="o">=</span> <span class="nx">Options</span><span class="p">;</span>
+
+</pre></div>
+            </td>
+          </tr>
+          
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
