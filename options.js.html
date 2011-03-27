@@ -479,7 +479,7 @@ recurse into subdirectories.</p>
                 <a class="pilcrow" href="#section-26">&#182;</a>
               </div>
               <p>set <code>File.prototype.register</code> to add new files into a
-list maintained by this options object. See <a href="file.js.html">file.js</a></p>
+list maintained by this options object. See <a href="http://chrisdickinson.github.com/narrativ/file.js.html">file.js</a></p>
             </td>
             <td class="code">
               <div class="highlight"><pre>  <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
@@ -501,7 +501,7 @@ compiled -- create docs for each of them.</p>
             <td class="code">
               <div class="highlight"><pre>  <span class="k">this</span><span class="p">.</span><span class="nx">roots</span> <span class="o">&amp;&amp;</span>
   <span class="k">this</span><span class="p">.</span><span class="nx">roots</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">destination</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Destination</span><span class="p">(</span><span class="nx">fn</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">target_dir</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">ignore_dirs</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">destination</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Destination</span><span class="p">(</span><span class="nx">fn</span><span class="p">.</span><span class="nx">target</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">target_dir</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">ignore_dirs</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">base_url</span><span class="p">);</span>
     <span class="kd">var</span> <span class="nx">parser</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Parser</span><span class="p">(</span><span class="nx">destination</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">extensions</span><span class="p">);</span>
     <span class="nx">fn</span><span class="p">(</span><span class="nx">parser</span><span class="p">).</span><span class="nx">compile</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">destination</span><span class="p">);</span> 
     <span class="nx">destination</span><span class="p">.</span><span class="nx">write_media</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>

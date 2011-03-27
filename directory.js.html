@@ -58,7 +58,7 @@
  directories.</p>
 
 <p>Handles recursion into said directories, as well as the
- creation of <a href="file.js.html">child <code>File</code> objects</a>.</p>
+ creation of <a href="http://chrisdickinson.github.com/narrativ/file.js.html">child <code>File</code> objects</a>.</p>
             </td>
             <td class="code">
               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">method</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./utils&#39;</span><span class="p">).</span><span class="nx">method</span><span class="p">,</span>
@@ -80,8 +80,8 @@
 
 <ul>
 <li><code>path</code>: An absolute path to this directory</li>
-<li><code>parser</code>: An instance of the <a href="parser.js.html">Parser class</a>.</li>
-<li><code>file_class</code>: Defaults to <a href="file.js.html">File</a>, but can be overriden (for test stubbing)</li>
+<li><code>parser</code>: An instance of the <a href="http://chrisdickinson.github.com/narrativ/parser.js.html">Parser class</a>.</li>
+<li><code>file_class</code>: Defaults to <a href="http://chrisdickinson.github.com/narrativ/file.js.html">File</a>, but can be overriden (for test stubbing)</li>
 </ul>
             </td>
             <td class="code">
@@ -166,7 +166,7 @@ or <code>error</code> if there is an error reading the directory.</p>
               <p>get the full path to the child and run <code>fs.stat</code> on it to determine
 whether we're dealing with a file or a subdirectory.</p>
 
-<p>also, if it's a file, double check that the <a href="parser.js.html">parser</a> supports it.</p>
+<p>also, if it's a file, double check that the <a href="http://chrisdickinson.github.com/narrativ/parser.js.html">parser</a> supports it.</p>
             </td>
             <td class="code">
               <div class="highlight"><pre>        <span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">join</span><span class="p">(</span><span class="nx">self</span><span class="p">.</span><span class="nx">path</span><span class="p">,</span> <span class="nx">file</span><span class="p">);</span>
