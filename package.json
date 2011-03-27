@@ -3,7 +3,7 @@
   "description":  "Kind of a rip off of Docco",
   "keywords":     ["documentation", "docs", "generator"],
   "author":       "Chris Dickinson",
-  "version":      "0.0.4",
+  "version":      "0.0.5",
   "dependencies": {
     "plate":     "0.0.8"
   },
